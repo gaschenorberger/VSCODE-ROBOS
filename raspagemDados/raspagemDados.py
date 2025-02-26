@@ -14,9 +14,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 #----------------------------------------------FUNÇÕES----------------------------------------------------
-planilha_caminhos = openpyxl.Workbook(r'Python\raspagemDados\infKabum.xlsx') #ARQUIVO XLSX 
+planilha_caminhos = openpyxl.Workbook() #ARQUIVO XLSX 
 pagiCaminhos = planilha_caminhos.active
-pagiCaminhos.title = 'Dados'
+#pagiCaminhos.title = 'Dados'
 
 
 
@@ -38,8 +38,6 @@ def iniciar_navegador(com_debugging_remoto=True):
     
     navegador = webdriver.Chrome(service=service, options=chrome_options)
     return navegador
-
-navegador = iniciar_navegador()
 
 def obter_produtos():
     produtos_dados = []
@@ -67,10 +65,10 @@ def obter_produtos():
                     produtos_dados.append({"Produto": nome, "Preço": preco})
                     print(f"Produto: {nome} | Preço: {preco}")
                 else:
-                    print("Produto sem nome, ignorando")
+                    print("Produto sem nome")
 
             except NoSuchElementException:
-                print("Erro ao obter nome do produto, ignorando")
+                print("Erro ao obter nome do produto")
 
     except Exception as e:
         print(f"Erro: {e}")
@@ -78,9 +76,9 @@ def obter_produtos():
     return produtos_dados
 
 navegador = iniciar_navegador()
-produtos = obter_produtos(navegador)
+produtos = obter_produtos()
 
 df = pd.DataFrame(produtos)
-df.to_excel("produtos.xlsx", index=False)
+df.to_excel(r"raspagemDados\produtos.xlsx", index=False)
 
-print(" Arquivo 'produtos.xlsx' gerado")
+print("Produtos salvos")
