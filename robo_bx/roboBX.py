@@ -346,16 +346,6 @@ def login(cnpj):
     botaoMaximiza.click_input()
     time.sleep(0.5)
 
-def extracaoCnpj():
-    cnpjs = []
-    for row in pagiCaminhos.iter_rows(min_row=35, max_row=97):  
-        nome_empresa = row[0].value  
-        cnpj = row[1].value 
-        if cnpj:
-            cnpjs.append((nome_empresa, cnpj))  
-
-    return cnpjs
-
 def verificarProc(alinha, cnpj):
     while True:
         titulos = gw.getAllTitles()
@@ -522,7 +512,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
         time.sleep(0.5)
         pyautogui.press('enter')
         pyautogui.hotkey('ctrl','p')
-        time.sleep(1)
+        time.sleep(0.3)
 
         resultadoPesquisa = verificarSolicitacao(alinha, sped)
         print(f"Resultado retornado por ecd: {resultadoPesquisa}")
@@ -576,7 +566,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
                     procurar_imagem(r'robo_bx\prints\inputCnpjPesquisa.png')
                     procurar_imagem(r'robo_bx\prints\situacaoSped.png'), time.sleep(1)
                     procurar_imagem(r'robo_bx\prints\situacaoSped.png')
-                    buscar_e_clicar_todas('SUBSTITUÍDA', horizontal=-776)
+                    buscar_e_clicar_todas('SUBSTITUÍDA', horizontal=-776, max_tentativas=5)
                     procurar_imagem(r'robo_bx\prints\solicitarArquivos.png')
                     coletarPedido()
 
@@ -727,7 +717,7 @@ def downloadSped(pedido):
     time.sleep(1)
 
     while True:
-        encontrou = buscar_e_clicar(pedido, max_tentativas=25)
+        encontrou = buscar_e_clicar(pedido, max_tentativas=15)
         
         if encontrou:
             print("Pedido Encontrado")
@@ -882,12 +872,22 @@ def redirecionarSped(sped):
                     else:
                         print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
 
+def extracaoCnpj():
+    cnpjs = []
+    for row in pagiCaminhos.iter_rows(min_row=40, max_row=97):  
+        nome_empresa = row[0].value  
+        cnpj = row[1].value 
+        if cnpj:
+            cnpjs.append((nome_empresa, cnpj))  
+
+    return cnpjs
+
 def abrirBx():
     pastaDestinoEcf = r'C:\VS_CODE\BX\SpedsBaixados\ECF'
     cnpjs = extracaoCnpj()  
-    alinha = 35
-    sped = 'icms'
-    dataIn = '01/01/2020'
+    alinha = 40
+    sped = 'ecd'
+    dataIn = '01/01/2014'
     dataFim = '25/02/2025'
 
     with tqdm(total=len(cnpjs), desc="Processando CNPJs", ncols=70, unit="CNPJ") as barra:
@@ -919,7 +919,7 @@ def abrirBx():
             tempo_restante = (len(cnpjs) - barra.n) * tempo_gasto
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
 
-#abrirBx()
+abrirBx()
 #extracaoCnpj()
 
 #pesquisa('ecd', '01/01/2014', '31/12/2024')
