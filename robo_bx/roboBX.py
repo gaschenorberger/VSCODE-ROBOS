@@ -30,7 +30,7 @@ import win32api
 #----------------------------------------------FUNÇÕES----------------------------------------------------
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 planilha_caminhos = openpyxl.load_workbook(r"robo_bx\BasesNovas.xlsx") #ARQUIVO XLSX 
-pagiCaminhos= planilha_caminhos['Planilha1'] 
+pagiCaminhos = planilha_caminhos['Planilha1'] 
 
 def buscar_e_clicar(texto_busca, ocorrencia=1, horizontal=10, vertical=10, click=1, coordenadas=None, max_tentativas=50):
 
