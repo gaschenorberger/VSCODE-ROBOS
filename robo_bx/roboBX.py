@@ -396,9 +396,9 @@ def verificarProc(alinha, cnpj):
             print(f"Não há janelas 'Pesquisando arquivos' abertas. Finalizando...")
             break           
 
-def tratarSpedEcf(pastaDestinoEcf):  
+def tratarSpedEcf(pastaDestinoEcf, nomeEmpresa):  
     arquivosSeparados = {}
-    pastaBackup = r"C:\Users\gabriel.alvise\Documents"
+    pastaBackup = r"C:\Users\gabriel.alvise\Documents\BackupECF"
     
     for arquivo in os.listdir(pastaDestinoEcf):
         if arquivo.startswith("SPEDECF") and arquivo.endswith(".txt"):
@@ -408,6 +408,14 @@ def tratarSpedEcf(pastaDestinoEcf):
                 dataHoraStr = partes[4].replace('.txt', '')
 
                 dataHora = datetime.strptime(dataHoraStr, "%Y%m%d%H%M%S")
+
+                nome_empresa = fr"C:\Users\gabriel.alvise\Documents\BackupECF\{nomeEmpresa}"
+
+                if not os.path.exists(nome_empresa):
+                    os.makedirs(nome_empresa)
+                    pastaBackup = os.path.join(pastaBackup, nome_empresa)
+                else:
+                    pastaBackup = os.path.join(pastaBackup, nome_empresa)
 
                 if periodo in arquivosSeparados:
                     if dataHora > arquivosSeparados[periodo]['data_hora']:
@@ -566,7 +574,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
                     procurar_imagem(r'robo_bx\prints\inputCnpjPesquisa.png')
                     procurar_imagem(r'robo_bx\prints\situacaoSped.png'), time.sleep(1)
                     procurar_imagem(r'robo_bx\prints\situacaoSped.png')
-                    buscar_e_clicar_todas('SUBSTITUÍDA', horizontal=-776, max_tentativas=5)
+                    buscar_e_clicar_todas('SUBSTITUÍDA', horizontal=-785, max_tentativas=5)
                     procurar_imagem(r'robo_bx\prints\solicitarArquivos.png')
                     coletarPedido()
 
@@ -657,7 +665,7 @@ def verificarSolicitacao(alinha, sped):
         else:
             resultadoPesquisa = 'Tem Procuração'
             print("Resultado Pesquisa:", resultadoPesquisa)
-            pagiCaminhos.cell(column=4, row=alinha, value=sped)
+            pagiCaminhos.cell(column=5, row=alinha, value=sped)
             planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
             return resultadoPesquisa  
 
@@ -867,6 +875,8 @@ def redirecionarSped(sped):
                                 mover_arquivo(arquivo, pasta_empresa)
                                 pastas_criadas.add(pasta_empresa)  
                                 print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
+
+                                tratarSpedEcf(pasta_empresa, nome_empresa)
                             else:
                                 print(f"Erro: Não foi possível extrair o nome da empresa do arquivo {arquivo.name}.")
                     else:
@@ -874,7 +884,7 @@ def redirecionarSped(sped):
 
 def extracaoCnpj():
     cnpjs = []
-    for row in pagiCaminhos.iter_rows(min_row=40, max_row=97):  
+    for row in pagiCaminhos.iter_rows(min_row=35, max_row=97):  
         nome_empresa = row[0].value  
         cnpj = row[1].value 
         if cnpj:
@@ -883,10 +893,9 @@ def extracaoCnpj():
     return cnpjs
 
 def abrirBx():
-    pastaDestinoEcf = r'C:\VS_CODE\BX\SpedsBaixados\ECF'
     cnpjs = extracaoCnpj()  
-    alinha = 40
-    sped = 'ecd'
+    alinha = 35
+    sped = 'ecf'
     dataIn = '01/01/2014'
     dataFim = '25/02/2025'
 
@@ -907,8 +916,6 @@ def abrirBx():
             time.sleep(1)
             redirecionarSped(sped)
 
-            #tratarSpedEcf(pastaDestinoEcf)
-
             time.sleep(1.2)
             fecharBx()
 
@@ -919,12 +926,13 @@ def abrirBx():
             tempo_restante = (len(cnpjs) - barra.n) * tempo_gasto
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
 
-abrirBx()
+#abrirBx()
 #extracaoCnpj()
 
 #pesquisa('ecd', '01/01/2014', '31/12/2024')
 
 #titulos = gw.getAllTitles()
 #print(titulos)
-
-
+pastaDestinoEcf = r'C:\Users\gabriel.alvise\Documents\Arquivos ReceitanetBX'
+nomeEmpresa = 'TESTE'
+tratarSpedEcf(pastaDestinoEcf, nomeEmpresa)

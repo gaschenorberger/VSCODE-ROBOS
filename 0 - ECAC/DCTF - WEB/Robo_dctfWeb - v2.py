@@ -140,7 +140,7 @@ def baixarXML():
         traceback.print_exc()
 
 def percorrer_dctf():
-    anoAp, anoTr = 2018, 2018
+    anoAp, anoTr = 2014, 2024
     d = 2
 
     aplicarFiltros(anoAp, anoTr)
