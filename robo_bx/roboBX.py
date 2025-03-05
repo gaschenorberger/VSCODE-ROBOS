@@ -909,7 +909,7 @@ def dataSped(sped):
 
 def extracaoCnpj():
     cnpjs = []
-    for row in pagiCaminhos.iter_rows(min_row=64, max_row=97):  
+    for row in pagiCaminhos.iter_rows(min_row=65, max_row=97):  
         nome_empresa = row[0].value  
         cnpj = row[1].value 
         if cnpj:
@@ -919,7 +919,7 @@ def extracaoCnpj():
 
 def abrirBx():
     cnpjs = extracaoCnpj()  
-    alinha = 64
+    alinha = 65
     sped = 'ecf'
     dataInicio, dataFim = dataSped(sped)
 
