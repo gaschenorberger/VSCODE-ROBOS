@@ -632,15 +632,11 @@ def verificarSolicitacao(alinha, sped):
             resultadoPesquisa = None
 
             while tentativas < max_tentativas:
-                encontrou_nenhum_arquivo = procurar_imagem(r'robo_bx\prints\nenhumArquivo.png', max_tentativas=5)
-                encontrou_sem_proc = procurar_imagem(r'robo_bx\prints\semProc.png', max_tentativas=5)
-                encontrou_sem_proc2 = procurar_imagem(r'robo_bx\prints\proc.png', max_tentativas=5)
-                op_nao_concluida = buscar_e_clicar('OPERAÇÃO')
+                encontrou_nenhum_arquivo = procurar_imagem(r'robo_bx\prints\nenhumArquivo.png', max_tentativas=3)
+                encontrou_sem_proc = procurar_imagem(r'robo_bx\prints\semProc.png', max_tentativas=3)
+                encontrou_sem_proc2 = procurar_imagem(r'robo_bx\prints\procCancelada.png', max_tentativas=3)
+                op_nao_concluida = buscar_e_clicar('OPERAÇÃO', max_tentativas=2)
 
-                if op_nao_concluida:
-                    pyautogui.press('enter')
-                    pyautogui.hotkey('ctrl','p')
-                    resultadoPesquisa = verificarSolicitacao(alinha, sped)
 
                 if encontrou_sem_proc:
                     resultadoPesquisa = 'Sem procuração'
@@ -662,6 +658,10 @@ def verificarSolicitacao(alinha, sped):
                     planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
                     break  
 
+                if op_nao_concluida:
+                    pyautogui.press('enter')
+                    pyautogui.hotkey('ctrl','p')
+                    resultadoPesquisa = verificarSolicitacao(alinha, sped)
 
                 tentativas += 1
                 time.sleep(1)
@@ -909,7 +909,7 @@ def dataSped(sped):
 
 def extracaoCnpj():
     cnpjs = []
-    for row in pagiCaminhos.iter_rows(min_row=37, max_row=97):  
+    for row in pagiCaminhos.iter_rows(min_row=64, max_row=97):  
         nome_empresa = row[0].value  
         cnpj = row[1].value 
         if cnpj:
@@ -919,7 +919,7 @@ def extracaoCnpj():
 
 def abrirBx():
     cnpjs = extracaoCnpj()  
-    alinha = 37
+    alinha = 64
     sped = 'ecf'
     dataInicio, dataFim = dataSped(sped)
 
