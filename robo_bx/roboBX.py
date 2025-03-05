@@ -30,6 +30,7 @@ import win32api
 #----------------------------------------------FUNÇÕES----------------------------------------------------
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 planilha_caminhos = openpyxl.load_workbook(r"robo_bx\BasesNovas.xlsx") #ARQUIVO XLSX 
+#planilha_caminhos = openpyxl.load_workbook(r"C:\Users\gabriel.alvise\Desktop\EMPRESAS\MATEUS\baixarArq.xlsx")
 pagiCaminhos = planilha_caminhos['Planilha1'] 
 
 def buscar_e_clicar(texto_busca, ocorrencia=1, horizontal=10, vertical=10, click=1, coordenadas=None, max_tentativas=50):
@@ -226,7 +227,8 @@ def procurar_imagem(nome_arquivo, confidence=0.8, region=None, max_tentativas=60
         pyautogui.doubleClick(x, y)
 
     def coordenada(x, y):
-        print(f'Coordenadas da imagem: ({x}, {y})')
+        #print(f'Coordenadas da imagem: ({x}, {y})')
+        print()
 
     def moveMouse(x, y, variationx=(-5, 5), variationy=(-5, 5), up_down=(0.2, 0.3), min_variation=-10, max_variation=10, use_every=4, sleeptime=(0.009, 0.019), linear=90):
         mkey.left_click_xy_natural(
@@ -487,7 +489,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
         procurar_imagem(r'robo_bx\prints\inputTipoArquivo.png', horizontal=10)
         procurar_imagem(r'robo_bx\prints\inputEscrituracao.png')
         procurar_imagem(r'robo_bx\prints\inputTipoPesquisa.png')
-        procurar_imagem(r'robo_bx\prints\inputPeriodoEscrituracao.png')
+        procurar_imagem(r'robo_bx\prints\inputPeriodoEcf.png')
 
         procurar_imagem(r'robo_bx\prints\inputDataInicio.png')
         pyautogui.write(dataInicio)
@@ -633,6 +635,12 @@ def verificarSolicitacao(alinha, sped):
                 encontrou_nenhum_arquivo = procurar_imagem(r'robo_bx\prints\nenhumArquivo.png', max_tentativas=5)
                 encontrou_sem_proc = procurar_imagem(r'robo_bx\prints\semProc.png', max_tentativas=5)
                 encontrou_sem_proc2 = procurar_imagem(r'robo_bx\prints\proc.png', max_tentativas=5)
+                op_nao_concluida = buscar_e_clicar('OPERAÇÃO')
+
+                if op_nao_concluida:
+                    pyautogui.press('enter')
+                    pyautogui.hotkey('ctrl','p')
+                    resultadoPesquisa = verificarSolicitacao(alinha, sped)
 
                 if encontrou_sem_proc:
                     resultadoPesquisa = 'Sem procuração'
@@ -882,9 +890,26 @@ def redirecionarSped(sped):
                     else:
                         print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
 
+def dataSped(sped):
+    match sped:
+        case 'icms':
+            dataInicio = '01/01/2020'
+            dataFim = datetime.today().strftime('%d/%m/%Y')
+        case 'piscofins':
+            dataInicio = '01/01/2020'
+            dataFim = datetime.today().strftime('%d/%m/%Y')
+        case 'ecd':
+            dataInicio = '01/01/2014'
+            dataFim = datetime.today().strftime('%d/%m/%Y')
+        case 'ecf':
+            dataInicio = '01/01/2014'
+            dataFim = datetime.today().strftime('%d/%m/%Y')
+
+    return dataInicio, dataFim
+
 def extracaoCnpj():
     cnpjs = []
-    for row in pagiCaminhos.iter_rows(min_row=35, max_row=97):  
+    for row in pagiCaminhos.iter_rows(min_row=37, max_row=97):  
         nome_empresa = row[0].value  
         cnpj = row[1].value 
         if cnpj:
@@ -894,25 +919,25 @@ def extracaoCnpj():
 
 def abrirBx():
     cnpjs = extracaoCnpj()  
-    alinha = 35
+    alinha = 37
     sped = 'ecf'
-    dataIn = '01/01/2014'
-    dataFim = '25/02/2025'
+    dataInicio, dataFim = dataSped(sped)
 
     with tqdm(total=len(cnpjs), desc="Processando CNPJs", ncols=70, unit="CNPJ") as barra:
         for nome_empresa, cnpj in cnpjs:  
+
             print(f"Processando CNPJ: {cnpj} - {nome_empresa}")  
 
             start_time = time.time()  
             procurar_imagem(r'C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\bx_areadetrabalho.png', clicks=2)
 
-            while procurar_imagem(r"C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\bxcarregando.png", clicks=0, max_tentativas=5):
+            while procurar_imagem(r"C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\bxcarregando.png", clicks=0, max_tentativas=2):
                 time.sleep(1)
 
             set_high_priority("javaw.exe")
 
             login(cnpj)
-            pesquisa(sped, dataIn, dataFim, alinha)
+            pesquisa(sped, dataInicio, dataFim, alinha)
             time.sleep(1)
             redirecionarSped(sped)
 
@@ -926,13 +951,9 @@ def abrirBx():
             tempo_restante = (len(cnpjs) - barra.n) * tempo_gasto
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
 
-#abrirBx()
-#extracaoCnpj()
+abrirBx()
 
 #pesquisa('ecd', '01/01/2014', '31/12/2024')
 
 #titulos = gw.getAllTitles()
 #print(titulos)
-pastaDestinoEcf = r'C:\Users\gabriel.alvise\Documents\Arquivos ReceitanetBX'
-nomeEmpresa = 'TESTE'
-tratarSpedEcf(pastaDestinoEcf, nomeEmpresa)
