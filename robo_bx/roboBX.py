@@ -662,6 +662,7 @@ def verificarSolicitacao(alinha, sped):
                     pyautogui.press('enter')
                     pyautogui.hotkey('ctrl','p')
                     resultadoPesquisa = verificarSolicitacao(alinha, sped)
+                    break
 
                 tentativas += 1
                 time.sleep(1)
@@ -773,17 +774,17 @@ def redirecionarSped(sped):
     }
 
     def limpar_nome_pasta(nome):
-        return re.sub(r'[<>:"/\\|?*]', '_', nome)
+        return re.sub(r'[<>:"/\\|?*]', '_', nome).strip().upper()
 
     def criar_pasta(nome_empresa, sped):
         nome_empresa = limpar_nome_pasta(nome_empresa)
         pasta_empresa = download_dir / nome_empresa
-        pasta_empresa.mkdir(exist_ok=True) 
+        pasta_empresa.mkdir(parents=True, exist_ok=True)
 
-        nome_sped = sped_nomes.get(sped, sped.upper())  
-        nome_sped = limpar_nome_pasta(nome_sped)  
+        nome_sped = sped_nomes.get(sped, sped.upper())
+        nome_sped = limpar_nome_pasta(nome_sped)
         pasta_sped = pasta_empresa / nome_sped
-        pasta_sped.mkdir(exist_ok=True) 
+        pasta_sped.mkdir(parents=True, exist_ok=True)
 
         return pasta_sped
     
@@ -791,104 +792,39 @@ def redirecionarSped(sped):
         destino_arquivo = destino / arquivo.name
         shutil.move(str(arquivo), str(destino_arquivo))
 
-    match sped:
-        case 'ecd':
-            def obter_nome_empresa(arquivo):
-                with open(arquivo, "r", encoding="latin-1") as f: 
-                    primeira_linha = f.readline().strip()
-                    partes = primeira_linha.split("|")  
-                    if len(partes) >= 5:
-                        return partes[5]
-                return None
+    def obter_nome_empresa(arquivo, indice_nome):
+        with open(arquivo, "r", encoding="latin-1") as f: 
+            primeira_linha = f.readline().strip()
+            partes = primeira_linha.split("|")  
+            if len(partes) > indice_nome:
+                return limpar_nome_pasta(partes[indice_nome])
+        return None
 
-            arquivos_txt = list(download_dir.glob("*.txt"))
-            if arquivos_txt:
-                pastas_criadas = set() 
-                for arquivo in arquivos_txt:
-                    nome_empresa = obter_nome_empresa(arquivo)
-                    if nome_empresa:
-                        pasta_empresa = criar_pasta(nome_empresa, sped)
-                        mover_arquivo(arquivo, pasta_empresa)
-                        pastas_criadas.add(pasta_empresa)  
-                        print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
-                    else:
-                        print(f"Erro: Não foi possível extrair o nome da empresa do arquivo {arquivo.name}.")
-            else:
-                print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
+    arquivos_txt = list(download_dir.glob("*.txt"))
 
-        case 'piscofins':
-                    def obter_nome_empresa(arquivo):
-                        with open(arquivo, "r", encoding="latin-1") as f: 
-                            primeira_linha = f.readline().strip()
-                            partes = primeira_linha.split("|")  
-                            if len(partes) >= 5:
-                                return partes[8]
-                        return None
+    if not arquivos_txt:
+        print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
+        return
 
-                    arquivos_txt = list(download_dir.glob("*.txt"))
-                    if arquivos_txt:
-                        pastas_criadas = set() 
-                        for arquivo in arquivos_txt:
-                            nome_empresa = obter_nome_empresa(arquivo)
-                            if nome_empresa:
-                                pasta_empresa = criar_pasta(nome_empresa, sped)
-                                mover_arquivo(arquivo, pasta_empresa)
-                                pastas_criadas.add(pasta_empresa)  
-                                print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
-                            else:
-                                print(f"Erro: Não foi possível extrair o nome da empresa do arquivo {arquivo.name}.")
-                    else:
-                        print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
+    for arquivo in arquivos_txt:
+        indice_nome = {
+            'ecd': 5,
+            'piscofins': 8,
+            'icms': 6,
+            'ecf': 5
+        }.get(sped, 5)
 
-        case 'icms':
-                    def obter_nome_empresa(arquivo):
-                        with open(arquivo, "r", encoding="latin-1") as f: 
-                            primeira_linha = f.readline().strip()
-                            partes = primeira_linha.split("|")  
-                            if len(partes) >= 5:
-                                return partes[6]
-                        return None
+        nome_empresa = obter_nome_empresa(arquivo, indice_nome)
 
-                    arquivos_txt = list(download_dir.glob("*.txt"))
-                    if arquivos_txt:
-                        pastas_criadas = set() 
-                        for arquivo in arquivos_txt:
-                            nome_empresa = obter_nome_empresa(arquivo)
-                            if nome_empresa:
-                                pasta_empresa = criar_pasta(nome_empresa, sped)
-                                mover_arquivo(arquivo, pasta_empresa)
-                                pastas_criadas.add(pasta_empresa)  
-                                print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
-                            else:
-                                print(f"Erro: Não foi possível extrair o nome da empresa do arquivo {arquivo.name}.")
-                    else:
-                        print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
+        if nome_empresa:
+            pasta_empresa = criar_pasta(nome_empresa, sped)
+            mover_arquivo(arquivo, pasta_empresa)
+            print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
 
-        case 'ecf':
-                    def obter_nome_empresa(arquivo):
-                        with open(arquivo, "r", encoding="latin-1") as f: 
-                            primeira_linha = f.readline().strip()
-                            partes = primeira_linha.split("|")  
-                            if len(partes) >= 5:
-                                return partes[5]
-                        return None
-
-                    arquivos_txt = list(download_dir.glob("*.txt"))
-                    if arquivos_txt:
-                        pastas_criadas = set() 
-                        for arquivo in arquivos_txt:
-                            nome_empresa = obter_nome_empresa(arquivo)
-                            if nome_empresa:
-                                pasta_empresa = criar_pasta(nome_empresa, sped)
-                                mover_arquivo(arquivo, pasta_empresa)
-                                pastas_criadas.add(pasta_empresa)  
-                                print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
-
-                                tratarSpedEcf(pasta_empresa, nome_empresa)
-                            else:
-                                print(f"Erro: Não foi possível extrair o nome da empresa do arquivo {arquivo.name}.")
-                    else:
-                        print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
+            if sped == 'ecf':
+                tratarSpedEcf(pasta_empresa, nome_empresa)
+        else:
+            print(f"Erro: Não foi possível extrair o nome da empresa do arquivo {arquivo.name}.")
 
 def dataSped(sped):
     match sped:
@@ -909,7 +845,7 @@ def dataSped(sped):
 
 def extracaoCnpj():
     cnpjs = []
-    for row in pagiCaminhos.iter_rows(min_row=65, max_row=97):  
+    for row in pagiCaminhos.iter_rows(min_row=100):  
         nome_empresa = row[0].value  
         cnpj = row[1].value 
         if cnpj:
@@ -919,7 +855,7 @@ def extracaoCnpj():
 
 def abrirBx():
     cnpjs = extracaoCnpj()  
-    alinha = 65
+    alinha = 100
     sped = 'ecf'
     dataInicio, dataFim = dataSped(sped)
 
