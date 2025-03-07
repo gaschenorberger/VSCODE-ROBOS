@@ -431,7 +431,7 @@ def tratarSpedEcf(pastaDestinoEcf, nomeEmpresa):
                     arquivosSeparados[periodo] = {'data_hora': dataHora, 'caminho': os.path.join(pastaDestinoEcf, arquivo)}
 
 
-def pesquisa(sped, dataInicio, dataFim, alinha):
+def pesquisa(sped, dataInicio, dataFim, alinha, nome_empresa, cnpj):
         
     def icms():
         buscar_e_clicar('Arquivo')
@@ -543,7 +543,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
                     procurar_imagem(r'robo_bx\prints\verificarResultado.png')
                     procurar_imagem(r'robo_bx\prints\inputCnpjPesquisa.png')
                     procurar_imagem(r'robo_bx\prints\solicitarArquivos.png')
-                    coletarPedido()
+                    coletarPedido(nome_empresa, cnpj)
 
         case 'piscofins':
             resultadoPesquisa = piscofins()
@@ -559,7 +559,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
                     procurar_imagem(r'robo_bx\prints\verificarResultado.png')
                     procurar_imagem(r'robo_bx\prints\inputCnpjPesquisa.png')
                     procurar_imagem(r'robo_bx\prints\solicitarArquivos.png')
-                    coletarPedido()
+                    coletarPedido(nome_empresa, cnpj)
 
         case 'ecd':
             resultadoPesquisa = ecd()
@@ -578,7 +578,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
                     procurar_imagem(r'robo_bx\prints\situacaoSped.png')
                     buscar_e_clicar_todas('SUBSTITUÍDA', horizontal=-785, max_tentativas=5)
                     procurar_imagem(r'robo_bx\prints\solicitarArquivos.png')
-                    coletarPedido()
+                    coletarPedido(nome_empresa, cnpj)
 
         case 'ecf':
             resultadoPesquisa = ecf()
@@ -594,7 +594,7 @@ def pesquisa(sped, dataInicio, dataFim, alinha):
                     procurar_imagem(r'robo_bx\prints\verificarResultado.png')
                     procurar_imagem(r'robo_bx\prints\inputContribPesquisa.png')
                     procurar_imagem(r'robo_bx\prints\solicitarArquivos.png')
-                    coletarPedido()
+                    coletarPedido(nome_empresa, cnpj)
 
 def verificarSolicitacao(alinha, sped):
     max_espera = 10  
@@ -632,56 +632,88 @@ def verificarSolicitacao(alinha, sped):
             resultadoPesquisa = None
 
             while tentativas < max_tentativas:
-                encontrou_nenhum_arquivo = procurar_imagem(r'robo_bx\prints\nenhumArquivo.png', max_tentativas=3)
-                encontrou_sem_proc = procurar_imagem(r'robo_bx\prints\semProc.png', max_tentativas=3)
-                encontrou_sem_proc2 = procurar_imagem(r'robo_bx\prints\procCancelada.png', max_tentativas=3)
-                op_nao_concluida = buscar_e_clicar('OPERAÇÃO', max_tentativas=2)
+                print('Verificando')
 
+                encontrou_sem_proc = procurar_imagem(r'robo_bx\prints\semProc.png', max_tentativas=3)
 
                 if encontrou_sem_proc:
-                    resultadoPesquisa = 'Sem procuração'
-                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
-                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
-                    print('Sem Procuração Salvo na Planilha')
-                    break  
+                    resultadoProc = 'semProc'
+                    break
+
+                encontrou_sem_proc2 = procurar_imagem(r'robo_bx\prints\procCancelada.png', max_tentativas=3)
 
                 if encontrou_sem_proc2:
-                    resultadoPesquisa = 'Sem procuração'
-                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
-                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
-                    print('Sem Procuração Salvo na Planilha')
-                    break  
-                
+                    resultadoProc = 'procCancelada'
+                    break
+
+                encontrou_nenhum_arquivo = procurar_imagem(r'robo_bx\prints\nenhumArquivo.png', max_tentativas=3)
+
                 if encontrou_nenhum_arquivo:
-                    resultadoPesquisa = 'Nenhum Arquivo'
-                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
-                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
-                    break  
+                    resultadoProc = 'nenhumArquivo'
+                    break
+                
+                op_nao_concluida = buscar_e_clicar('OPERAÇÃO', max_tentativas=2)
 
                 if op_nao_concluida:
-                    pyautogui.press('enter')
-                    pyautogui.hotkey('ctrl','p')
-                    resultadoPesquisa = verificarSolicitacao(alinha, sped)
+                    resultadoProc = 'OPERAÇÃO'
                     break
 
                 tentativas += 1
                 time.sleep(1)
+            
+            match resultadoProc:
+                case 'semProc':
+                    resultadoPesquisa = 'Sem procuração'
+                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
+                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
+                    print('Sem Procuração Salvo na Planilha')
+
+                case 'procCancelada':
+                    resultadoPesquisa = 'Sem procuração'
+                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
+                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
+                    print('Sem Procuração Salvo na Planilha')
+
+                case 'nenhumArquivo': 
+                    resultadoPesquisa = 'Nenhum Arquivo'
+                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
+                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
+
+                case 'OPERAÇÃO':
+                    print('Erro no certificado, resolvendo e iniciando pesquisa novamente')
+                    pyautogui.press('enter')
+                    pyautogui.hotkey('ctrl','p')
+                    resultadoPesquisa = verificarSolicitacao(alinha, sped)
+                
 
             if resultadoPesquisa:
                 print("Resultado Pesquisa:", resultadoPesquisa)
                 return resultadoPesquisa  
 
         else:
+
+            valor_atual = pagiCaminhos.cell(column=5, row=alinha).value
+
+            if valor_atual:
+                valores = valor_atual.split(", ")  
+                if sped not in valores: 
+                    valores.append(sped)
+                    novo_valor = ", ".join(valores)
+                else:
+                    novo_valor = valor_atual  
+            else:
+                novo_valor = sped  
+
             resultadoPesquisa = 'Tem Procuração'
             print("Resultado Pesquisa:", resultadoPesquisa)
-            pagiCaminhos.cell(column=5, row=alinha, value=sped)
+            pagiCaminhos.cell(column=5, row=alinha, value=novo_valor)
             planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
             return resultadoPesquisa  
 
         time.sleep(1)
 
 
-def coletarPedido():
+def coletarPedido(nome_empresa, cnpj):
     x, y, largura, altura = 918, 489, 70, 30  
     time.sleep(2)
     titulos = gw.getAllTitles()
@@ -718,9 +750,9 @@ def coletarPedido():
 
         procurar_imagem(r"robo_bx\prints\pedido.png")
         pyautogui.press('enter')
-        downloadSped(pedido_formatado)
+        downloadSped(pedido_formatado, nome_empresa, cnpj)
 
-def downloadSped(pedido):
+def downloadSped(pedido, nome_empresa, cnpj):
     buscar_e_clicar('Arquivo')
     pyautogui.hotkey('ctrl','a')
     time.sleep(1.5)
@@ -750,6 +782,8 @@ def downloadSped(pedido):
     procurar_imagem(r'C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\selecionarTodos.png', max_tentativas=500)
     procurar_imagem(r'C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\btnBaixar.png')
 
+    print(f'Iniciando download da empresa: {cnpj} - {nome_empresa}')
+
     while True:
         if buscar_e_clicar("Não há arquivos na fila de download.", max_tentativas=2) is True:
             break
@@ -776,9 +810,29 @@ def redirecionarSped(sped):
     def limpar_nome_pasta(nome):
         return re.sub(r'[<>:"/\\|?*]', '_', nome).strip().upper()
 
-    def criar_pasta(nome_empresa, sped):
+    def extrair_cnpj(arquivo, indice_cnpj):
+        with open(arquivo, "r", encoding="latin-1") as f:
+            primeira_linha = f.readline().strip()
+            partes = primeira_linha.split("|")
+            if len(partes) > indice_cnpj:
+                cnpj_completo = re.sub(r'\D', '', partes[indice_cnpj])  
+                if len(cnpj_completo) >= 12:  
+                    cnpj_modificado = cnpj_completo[:11] + '1' + cnpj_completo[12:]  
+                    return cnpj_modificado
+                return cnpj_completo 
+        return None
+
+    def obter_nome_empresa(arquivo, indice_nome):
+        with open(arquivo, "r", encoding="latin-1") as f:
+            primeira_linha = f.readline().strip()
+            partes = primeira_linha.split("|")
+            if len(partes) > indice_nome:
+                return limpar_nome_pasta(partes[indice_nome])
+        return None
+
+    def criar_pasta(cnpj, nome_empresa, sped):
         nome_empresa = limpar_nome_pasta(nome_empresa)
-        pasta_empresa = download_dir / nome_empresa
+        pasta_empresa = download_dir / f"{cnpj} - {nome_empresa}"
         pasta_empresa.mkdir(parents=True, exist_ok=True)
 
         nome_sped = sped_nomes.get(sped, sped.upper())
@@ -787,44 +841,47 @@ def redirecionarSped(sped):
         pasta_sped.mkdir(parents=True, exist_ok=True)
 
         return pasta_sped
-    
+
     def mover_arquivo(arquivo, destino):
         destino_arquivo = destino / arquivo.name
         shutil.move(str(arquivo), str(destino_arquivo))
 
-    def obter_nome_empresa(arquivo, indice_nome):
-        with open(arquivo, "r", encoding="latin-1") as f: 
-            primeira_linha = f.readline().strip()
-            partes = primeira_linha.split("|")  
-            if len(partes) > indice_nome:
-                return limpar_nome_pasta(partes[indice_nome])
-        return None
-
     arquivos_txt = list(download_dir.glob("*.txt"))
-
     if not arquivos_txt:
         print("Erro: Nenhum arquivo .txt encontrado na pasta de downloads.")
         return
 
+    indice_cnpj = {
+        'ecd': 6,
+        'piscofins': 9,
+        'icms': 7,
+        'ecf': 4
+    }.get(sped, 4)
+
+    indice_nome = {
+        'ecd': 5,
+        'piscofins': 8,
+        'icms': 6,
+        'ecf': 5
+    }.get(sped, 5)
+
+    empresas = {}  
     for arquivo in arquivos_txt:
-        indice_nome = {
-            'ecd': 5,
-            'piscofins': 8,
-            'icms': 6,
-            'ecf': 5
-        }.get(sped, 5)
+        cnpj = extrair_cnpj(arquivo, indice_cnpj)
+        if not cnpj:
+            print(f"Erro: Não foi possível extrair o CNPJ do arquivo {arquivo.name}.")
+            continue
 
-        nome_empresa = obter_nome_empresa(arquivo, indice_nome)
+        if cnpj not in empresas:
+            nome_empresa = obter_nome_empresa(arquivo, indice_nome)
+            empresas[cnpj] = nome_empresa if nome_empresa else "EMPRESA_DESCONHECIDA"
 
-        if nome_empresa:
-            pasta_empresa = criar_pasta(nome_empresa, sped)
-            mover_arquivo(arquivo, pasta_empresa)
-            print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
+        pasta_empresa = criar_pasta(cnpj, empresas[cnpj], sped)
+        mover_arquivo(arquivo, pasta_empresa)
+        print(f"Arquivo '{arquivo.name}' movido para '{pasta_empresa}'")
 
-            if sped == 'ecf':
-                tratarSpedEcf(pasta_empresa, nome_empresa)
-        else:
-            print(f"Erro: Não foi possível extrair o nome da empresa do arquivo {arquivo.name}.")
+        if sped == 'ecf':
+            tratarSpedEcf(pasta_empresa, empresas[cnpj])
 
 def dataSped(sped):
     match sped:
@@ -843,9 +900,9 @@ def dataSped(sped):
 
     return dataInicio, dataFim
 
-def extracaoCnpj():
+def extracaoCnpj(alinha):
     cnpjs = []
-    for row in pagiCaminhos.iter_rows(min_row=100):  
+    for row in pagiCaminhos.iter_rows(min_row=alinha):  
         nome_empresa = row[0].value  
         cnpj = row[1].value 
         if cnpj:
@@ -854,9 +911,9 @@ def extracaoCnpj():
     return cnpjs
 
 def abrirBx():
-    cnpjs = extracaoCnpj()  
     alinha = 100
-    sped = 'ecf'
+    sped = 'icms'
+    cnpjs = extracaoCnpj(alinha)  
     dataInicio, dataFim = dataSped(sped)
 
     with tqdm(total=len(cnpjs), desc="Processando CNPJs", ncols=70, unit="CNPJ") as barra:
@@ -873,7 +930,7 @@ def abrirBx():
             set_high_priority("javaw.exe")
 
             login(cnpj)
-            pesquisa(sped, dataInicio, dataFim, alinha)
+            pesquisa(sped, dataInicio, dataFim, alinha, nome_empresa, cnpj)
             time.sleep(1)
             redirecionarSped(sped)
 
@@ -886,6 +943,7 @@ def abrirBx():
             tempo_gasto = time.time() - start_time
             tempo_restante = (len(cnpjs) - barra.n) * tempo_gasto
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
+    
 
 abrirBx()
 
