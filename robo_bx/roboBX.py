@@ -33,7 +33,7 @@ planilha_caminhos = openpyxl.load_workbook(r"robo_bx\BasesNovas.xlsx") #ARQUIVO 
 #planilha_caminhos = openpyxl.load_workbook(r"C:\Users\gabriel.alvise\Desktop\EMPRESAS\MATEUS\baixarArq.xlsx")
 pagiCaminhos = planilha_caminhos['Planilha1'] 
 
-def buscar_e_clicar(texto_busca, ocorrencia=1, horizontal=10, vertical=10, click=1, coordenadas=None, max_tentativas=50):
+def buscar_e_clicar(texto_busca, ocorrencia=1, horizontal=10, vertical=10, click=1, coordenadas=None, max_tentativas=50, debug=True):
 
     def preprocessar_imagem(imagem):
         imagem_cinza = cv2.cvtColor(np.array(imagem), cv2.COLOR_BGR2GRAY)
@@ -64,13 +64,15 @@ def buscar_e_clicar(texto_busca, ocorrencia=1, horizontal=10, vertical=10, click
         bbox = None 
 
     while tentativa < max_tentativas and not encontrado:
-        print(f"Tentativa {tentativa + 1} de {max_tentativas} para encontrar '{texto_busca}'")
+        if debug:
+            print(f"Tentativa {tentativa + 1} de {max_tentativas} para encontrar '{texto_busca}'")
 
         screenshot = ImageGrab.grab(bbox=bbox)  
         if coordenadas:
             print(f'Capturando área: {coordenadas}')
         else:
-            print('Capturando tela inteira.')
+            if debug:
+                print('Capturando tela inteira.')
 
         largura_imagem, altura_imagem = screenshot.size  
 
@@ -105,8 +107,9 @@ def buscar_e_clicar(texto_busca, ocorrencia=1, horizontal=10, vertical=10, click
             x, y, largura, altura = ocorrencias_encontradas[ocorrencia - 1]
             encontrado = True
         else:
-            print(f'A ocorrência {ocorrencia} da palavra "{texto_busca}" não foi encontrada.')
-            tentativa += 1
+            if debug:
+                print(f'A ocorrência {ocorrencia} da palavra "{texto_busca}" não foi encontrada.')
+                tentativa += 1
 
     if encontrado:
         if 0 <= x <= largura_imagem and 0 <= y <= altura_imagem:
@@ -119,7 +122,8 @@ def buscar_e_clicar(texto_busca, ocorrencia=1, horizontal=10, vertical=10, click
         else:
             print(f'Coordenadas ({x}, {y}) estão fora dos limites da tela.')
     else:
-        print(f'Não foi possível encontrar a palavra "{texto_busca}" após {max_tentativas} tentativas.')
+        if debug:
+            print(f'Não foi possível encontrar a palavra "{texto_busca}" após {max_tentativas} tentativas.')
     
     return encontrado
 
@@ -753,14 +757,13 @@ def coletarPedido(nome_empresa, cnpj):
         downloadSped(pedido_formatado, nome_empresa, cnpj)
 
 def downloadSped(pedido, nome_empresa, cnpj):
+
     buscar_e_clicar('Arquivo')
     pyautogui.hotkey('ctrl','a')
     time.sleep(1.5)
+
     procurar_imagem(r'C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\setaBaixo.png')
     time.sleep(1)
-
-    """if not buscar_e_clicar(pedido):  
-        time.sleep(2)  """
 
     pyautogui.hotkey('ctrl', 'u')  
     time.sleep(1)
@@ -785,10 +788,11 @@ def downloadSped(pedido, nome_empresa, cnpj):
     print(f'Iniciando download da empresa: {cnpj} - {nome_empresa}')
 
     while True:
-        if buscar_e_clicar("Não há arquivos na fila de download.", max_tentativas=2) is True:
+        if buscar_e_clicar("Não há arquivos na fila de download.", max_tentativas=2, debug=False) is True:
             break
 
         else:
+            print('Arquivos ainda sendo baixados')
             time.sleep(10.5)
 
     procurar_imagem(r"C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\pedidosArquivos.png")
@@ -815,11 +819,10 @@ def redirecionarSped(sped):
             primeira_linha = f.readline().strip()
             partes = primeira_linha.split("|")
             if len(partes) > indice_cnpj:
-                cnpj_completo = re.sub(r'\D', '', partes[indice_cnpj])  
-                if len(cnpj_completo) >= 12:  
-                    cnpj_modificado = cnpj_completo[:11] + '1' + cnpj_completo[12:]  
-                    return cnpj_modificado
-                return cnpj_completo 
+                cnpj_completo = re.sub(r'\D', '', partes[indice_cnpj]) 
+                mascaraCnpj = cnpj_completo[:8]
+                if len(cnpj_completo) >= 12:
+                    return mascaraCnpj
         return None
 
     def obter_nome_empresa(arquivo, indice_nome):
@@ -911,7 +914,7 @@ def extracaoCnpj(alinha):
     return cnpjs
 
 def abrirBx():
-    alinha = 100
+    alinha = 132
     sped = 'icms'
     cnpjs = extracaoCnpj(alinha)  
     dataInicio, dataFim = dataSped(sped)
