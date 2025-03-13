@@ -329,7 +329,7 @@ def login(cnpj):
     titulos = gw.getAllTitles()
     janelasBX = titulos.count('Receitanet BX')
 
-    buscar_e_clicar('MARCIO RODRIGO FRIZZO')
+    buscar_e_clicar('MARCIO RODRIGO FRIZZO', debug=False)
     procurar_imagem(r'C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\btnContribuinte.png')
     procurar_imagem(r'C:\Users\gabriel.alvise\Desktop\ROBOS\robo_bx\prints\btnProcurador.png')
     time.sleep(0.5)
@@ -913,9 +913,9 @@ def extracaoCnpj(alinha):
 
     return cnpjs
 
-def abrirBx():
-    alinha = 132
-    sped = 'icms'
+def abrirBx(tipoSped, linha):
+    alinha = linha
+    sped = tipoSped
     cnpjs = extracaoCnpj(alinha)  
     dataInicio, dataFim = dataSped(sped)
 
@@ -948,7 +948,7 @@ def abrirBx():
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
     
 
-abrirBx()
+abrirBx('piscofins', 130)
 
 #pesquisa('ecd', '01/01/2014', '31/12/2024')
 

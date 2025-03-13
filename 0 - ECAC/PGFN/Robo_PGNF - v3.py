@@ -70,7 +70,7 @@ def adicionar_dados(dados):
 
     data_frame = pd.DataFrame(dados, columns=['Nº_INSCRICAO', 'CNPJ', 'NOME', 'DT_INSCRICAO', 'RECEITA', 'Nº_PROCESSO', 'SITUACAO', 'NATUREZA_DIVIDA', 'VL_PRINCIPAL', 'VL_MULTA','VL_JUROS', 'VL_ENCARGO', 'VL_TOTAL','DT_APURACAO','DT_VENCIMENTO', 'VL_DEBITO', 'VL_REMANESCENTE', 'VL_MULTA_MORA', 'NATUREZA_DEBITO', 'FOMRA_CONSTITUICAO','DT_ARRECADACAO_PAGAMENTO', 'DT_RECEPCAO_PAGAMENTO', 'VL_RECOLHIDO_PAGAMENTO', 'BANCO/AGENCIA_PAGAMENTO', 'NUM_CREDITO_PAGAMENTO','TIPO_CREDITO_PAGAMENTO', 'NUM_PAGAMENTO', 'NUM_SENDA_PAGAMENTO', 'ESTABELECIMENTO', 'COMPETENCIA','VL_ITEM', 'VL_DEVEDOR','SITUACAO', 'DT_ARRECADACAO', 'DT_APROPRIACAO', 'VL_APROPRIADO', 'REFERENCIA', 'NUM_GUIA','TIPO_CRED'])
     
-    data_frame.to_excel(r'C:\Users\gabriel.alvise\Desktop\EMPRESAS\DROGARIA\Relatório - PGFN.xlsx', index=False)
+    data_frame.to_excel(r'C:\Users\gabriel.alvise\Desktop\VSCODE-ROBOS\0 - ECAC\PGFN\Relatório - PGFN.xlsx', index=False)
 
 
 # PGFN
@@ -626,7 +626,7 @@ def renomear_plan():
     campoNome = navegador.find_element(By.XPATH, '//*[@id="userInfoMenu"]/div/div/b')
     nomeEmpresa = campoNome.text
 
-    caminhoPasta = Path(r'C:\Users\gabriel.alvise\Desktop\EMPRESAS\DROGARIA')
+    caminhoPasta = Path(r'C:\Users\gabriel.alvise\Desktop\VSCODE-ROBOS\0 - ECAC\PGFN')
     arquivo = r'Relatório - PGFN.xlsx'
     caminhoArquivo = caminhoPasta / arquivo
     try:
