@@ -99,6 +99,10 @@ def percorrer_inscricoes():
     a, g, i = 1, 1, 1
     dados = []
     while True:
+        
+        if a == 2:
+            break
+
         filtro(navegador, a, g)
     
         try:

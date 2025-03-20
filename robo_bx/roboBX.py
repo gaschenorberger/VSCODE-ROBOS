@@ -889,7 +889,7 @@ def redirecionarSped(sped):
 def dataSped(sped):
     match sped:
         case 'icms':
-            dataInicio = '01/01/2020'
+            dataInicio = '01/02/2025'
             dataFim = datetime.today().strftime('%d/%m/%Y')
         case 'piscofins':
             dataInicio = '01/01/2020'
@@ -948,7 +948,7 @@ def abrirBx(tipoSped, linha):
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
     
 
-abrirBx('piscofins', 130)
+abrirBx('icms', 130)
 
 #pesquisa('ecd', '01/01/2014', '31/12/2024')
 
