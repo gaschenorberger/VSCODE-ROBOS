@@ -34,5 +34,5 @@ def listar_pastas(caminho_principal):
                 print("  Nenhuma subpasta encontrada.")
             print("-" * 30)
 
-caminho_principal = r"D:\BKP_BX"
+caminho_principal = r"C:\Users\gabriel.alvise\Documents\Arquivos ReceitanetBX"
 listar_pastas(caminho_principal)
