@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checagem de Dados Diários</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_pag_inicial.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logoicon.png') }}" type="image/png">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="header">
+        <h1>DADOS DIÁRIOS</h1>
+    </div>
+    <div class="fundo-container">
+        <div class="container">
+            <div class="card-container">
+                <div class="card">
+                    <i class="fi fi-ss-sack-dollar" style="font-size: 50px; color: #ffa500;"></i>
+                    <h3>Regime Tributário</h3>
+                    <p>Últimas atualizações Regime Tributário</p>
+                    <a href="/regime-tributario" class="btn">Acessar</a>
+                </div>
+                <div class="card">
+                    <i class="fi fi-ss-document" style="font-size: 50px; color: #ffa500;"></i>
+                    <h3>Dados Abertos</h3>
+                    <p>Últimas atualizações Dados Abertos</p>
+                    <a href="/dados-abertos" class="btn">Acessar</a>
+                </div>
+                <div class="card">
+                    <i class="fi fi-ss-briefcase" style="font-size: 50px; color: #ffa500;"></i>
+                    <h3>Portal de Devedores</h3>
+                    <p>Últimas atualizações Portal Devedores</p>
+                    <a href="/portal-devedores" class="btn">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

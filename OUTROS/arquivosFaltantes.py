@@ -3,7 +3,7 @@ import os
 
 # Caminhos do Excel e da pasta
 caminho_excel = r'C:\Users\gabriel.alvise\Desktop\VSCODE-ROBOS\OUTROS\arquivos.xlsx'
-caminho_pasta = r'T:\COMUM\1 - PUBLICO\LOUISE.OSOWSKI'
+caminho_pasta = r'T:\CST\CST CVEL\CLIENTES\UPRESS\OPER\TRIB_FEDERAL\2024_11_08_Liq_Kepler\0000.LAUDO FINAL\01.anexos\Por Motorista\02. Contrato de Transporte de Carga'
 
 # Ler o Excel (supondo que os nomes estão na primeira coluna)
 df = pd.read_excel(caminho_excel, dtype=str)

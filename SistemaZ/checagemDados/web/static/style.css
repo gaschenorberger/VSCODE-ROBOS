@@ -1,0 +1,179 @@
+:root {
+    --primary-color: #FECD79; 
+    --secondary-color: #FFF8EC; 
+    --accent-color: #FFA500;
+    --accent-hover-color: #E59400;
+    --text-color-dark: #6A3D0F; 
+    --table-border-color: #F2D2A9; 
+    --hover-highlight: rgba(254, 205, 121, 0.3); 
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    background-color: white;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    transition: 0.5s;
+}
+
+header {
+    width: 100%;
+    background: #E59400;
+    padding: 10px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 70px;
+    margin-bottom: 20px;
+    color: white;
+    background-color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+table {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: var(--secondary-color);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    color: var(--text-color-dark);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+thead {
+    background-color: var(--primary-color);
+    color: var(--text-color-dark);
+    font-weight: bold;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--table-border-color);
+}
+
+tbody tr:hover {
+    background-color: var(--hover-highlight);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+a {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    background: var(--accent-color);
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+a:hover {
+    background: var(--accent-hover-color);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+a:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+#btn-site {
+    transition: 0.5s;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+
+    margin-top: 30px;
+    text-decoration: none;
+    background: var(--accent-color);
+    padding: 0px;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+#btn-site:hover {
+    background: var(--accent-hover-color);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+#btn-site.hidden {
+    opacity: 0;
+    transition: 0.3s;       
+    pointer-events: none; 
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    table th, table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    a {
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    table th, table td {
+        font-size: 0.8rem;
+    }
+
+    a {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+}

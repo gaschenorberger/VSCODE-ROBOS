@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Devedores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logoicon.png') }}" type="image/png">
+</head>
+<body>
+    <header></header>
+    <h1>Portal Devedores</h1>
+    <button id="btn-site"><a href="https://listadevedores.sefa.pr.gov.br/portal-devedor/arquivo" target="_blank">SITE</a></button>    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome do Arquivo</th>
+                <th>Última Atualização</th>
+                <th>Última Verificação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in dados %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/">Voltar</a>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

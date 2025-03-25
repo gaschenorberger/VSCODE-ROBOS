@@ -1,0 +1,217 @@
+
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-straight/css/uicons-solid-straight.css');
+
+@media (max-width: 1024px) {
+    .container {
+        padding: 30px;
+    }
+
+    .card-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .card h3 {
+        font-size: 1.3rem;
+    }
+
+    .card p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .card-container {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card h3 {
+        font-size: 1.2rem;
+    }
+
+    .card p {
+        font-size: 0.8rem;
+    }
+
+    .card .btn {
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .card {
+        padding: 12px;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    .card p {
+        font-size: 0.75rem;
+    }
+
+    .card .btn {
+        padding: 6px 12px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(20px);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    /*background: linear-gradient(135deg, #FECD79 0%, #F7A259 100%);*/;
+    background-color: white;
+    font-family: 'Roboto', sans-serif;
+    color: #6a3d0f; 
+}
+
+h1 {
+    font-size: 3rem; 
+    text-align: center;
+    margin-bottom: 20px;
+    color: black; 
+    font-family: 'Roboto', serif; 
+    font-weight: 700; 
+    text-transform: capitalize; 
+    letter-spacing: 2px; 
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1), 0 0 5px rgba(0, 0, 0, 0.2); 
+    animation: fadeIn 1.2s ease-out; 
+    border-bottom: 2px solid #ffa500;
+}
+
+.container {
+    padding: 40px 20px;
+    max-width: 800px;
+    padding: 30px;
+    background-color: #fff8ec; 
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.6s ease-in-out;
+
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 700px;
+    width: 100%;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 18px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card i {
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    color: #333;
+}
+
+.card p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.card .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #ffa500;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.card .btn:hover {
+    background: #e59400;
+}
+
+.fundo-container {
+    background-image: url('https://www.certezza.com.br/painel/fotos/banner/grandes/97e0dacbdce92896b888dd23b2145e2974a44aff7ccc023a8f092d4c19f2753f.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+
+  }
