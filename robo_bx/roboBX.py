@@ -352,55 +352,122 @@ def login(cnpj):
     botaoMaximiza.click_input()
     time.sleep(0.5)
 
-def verificarProc(alinha, cnpj):
-    while True:
+def verificarProc(alinha, cnpj, sped):
+    max_espera = 10  
+    inicio_espera = time.time()
+    
+    print("Aguardando a janela 'Pesquisando por arquivos...' abrir...")
+
+    while time.time() - inicio_espera < max_espera:
         titulos = gw.getAllTitles()
-        contagem = titulos.count('Pesquisando por arquivos...')
+        
+        if 'Pesquisando por arquivos...' in titulos:
+            print("Janela detectada! Prosseguindo...")
+            break  
+        
+        time.sleep(0.5)  
 
-        if contagem == 1:
-            print(f"Há {contagem} janelas 'Pesquisando arquivos' abertas.")
-            time.sleep(1.5)
+    else:
+        print("Janela não detectada no tempo limite.")
+        return 'Erro: Janela não apareceu'  
 
-            titulos = gw.getAllTitles()
-            contagemReceitanetBX = titulos.count('Receitanet BX')
+    time.sleep(2)
 
-            if contagemReceitanetBX > 1:
-                print(f"Há {contagemReceitanetBX} janelas 'Receitanet BX' abertas.")
+    while True:
+        print("Verificando janelas abertas...")
+        titulos = gw.getAllTitles()
 
-                encontrou_nao_existe_procuracao = False  
+        contagemReceitanetBX = titulos.count('Receitanet BX')
 
-                for tentativa in range(3):
-                    encontrado = buscar_e_clicar("Não existe procuração", max_tentativas=3)
-                    if encontrado:
-                        encontrou_nao_existe_procuracao = True
-                        pyautogui.press('enter')
-                        pagiCaminhos.cell(column=4, row=alinha, value='SEM PROC')
-                        planilha_caminhos.save(r'robo_bx\sem_proc.xlsx')
-                        print(f'{cnpj} - NÃO EXISTE PROCURAÇÃO')
-                        break
+        if contagemReceitanetBX > 1:
+            print(f"Há {contagemReceitanetBX} janelas 'Receitanet BX' abertas.")
+            print('Iniciando verificação de resultado...')
 
-                if encontrou_nao_existe_procuracao:
+            max_tentativas = 5
+            tentativas = 0
+            resultadoPesquisa = None
+
+            while tentativas < max_tentativas:
+                print('Verificando')
+
+                encontrou_sem_proc = procurar_imagem(r'robo_bx\prints\semProc.png', max_tentativas=3)
+
+                if encontrou_sem_proc:
+                    resultadoProc = 'semProc'
                     break
 
-                encontrou_arquivo = False
-                for tentativa in range(3):
-                    if procurar_imagem(r"C:\Users\gabriel.alvise\Desktop\ROBOS\BX - Copia\Prints\nenhumarquivo.png", max_tentativas=3):
-                        encontrou_arquivo = True
-                        pyautogui.press('enter')
-                        pagiCaminhos.cell(column=4, row=alinha, value='NENHUM ARQUIVO')
-                        planilha_caminhos.save(r'robo_bx\sem_proc.xlsx')
-                        print(f'{cnpj} - NENHUM ARQUIVO ENCONTRADO')
-                        break
+                encontrou_sem_proc2 = procurar_imagem(r'robo_bx\prints\procCancelada.png', max_tentativas=3)
 
-            else:
-                pagiCaminhos.cell(column=4, row=alinha, value='TEM PROC')
-                planilha_caminhos.save(r'robo_bx\sem_proc.xlsx')
-                print(f'{cnpj} - TEM PROCURAÇÃO')
+                if encontrou_sem_proc2:
+                    resultadoProc = 'procCancelada'
+                    break
 
+                encontrou_nenhum_arquivo = procurar_imagem(r'robo_bx\prints\nenhumArquivo.png', max_tentativas=3)
+
+                if encontrou_nenhum_arquivo:
+                    resultadoProc = 'nenhumArquivo'
+                    break
+                
+                op_nao_concluida = buscar_e_clicar('OPERAÇÃO', max_tentativas=2)
+
+                if op_nao_concluida:
+                    resultadoProc = 'OPERAÇÃO'
+                    break
+
+                tentativas += 1
+                time.sleep(1)
+            
+            match resultadoProc:
+                case 'semProc':
+                    resultadoPesquisa = 'Sem procuração'
+                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
+                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
+                    print(f'{cnpj} - Sem Procuração Salvo na Planilha')
+
+                case 'procCancelada':
+                    resultadoPesquisa = 'Sem procuração'
+                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
+                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
+                    print(f'{cnpj} - Sem Procuração Salvo na Planilha')
+
+                case 'nenhumArquivo': 
+                    resultadoPesquisa = 'Nenhum Arquivo'
+                    pagiCaminhos.cell(column=3, row=alinha, value='SEM PROC')
+                    planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
+                    print(f'{cnpj} - Sem Procuração Salvo na Planilha')
+
+                case 'OPERAÇÃO':
+                    print('Erro no certificado, resolvendo e iniciando pesquisa novamente')
+                    pyautogui.press('enter')
+                    pyautogui.hotkey('ctrl','p')
+                    resultadoPesquisa = verificarSolicitacao(alinha, sped)
+                
+
+            if resultadoPesquisa:
+                print("Resultado Pesquisa:", resultadoPesquisa)
+                return resultadoPesquisa  
 
         else:
-            print(f"Não há janelas 'Pesquisando arquivos' abertas. Finalizando...")
-            break           
+
+            valor_atual = pagiCaminhos.cell(column=5, row=alinha).value
+
+            if valor_atual:
+                valores = valor_atual.split(", ")  
+                if sped not in valores: 
+                    valores.append(sped)
+                    novo_valor = ", ".join(valores)
+                else:
+                    novo_valor = valor_atual  
+            else:
+                novo_valor = sped  
+
+            resultadoPesquisa = 'Tem Procuração'
+            print("Resultado Pesquisa:", resultadoPesquisa)
+            pagiCaminhos.cell(column=5, row=alinha, value=novo_valor)
+            planilha_caminhos.save(r'robo_bx\BasesNovas.xlsx')
+            return resultadoPesquisa  
+
+        time.sleep(1)      
 
 def tratarSpedEcf(pastaDestinoEcf, nomeEmpresa):  
     arquivosSeparados = {}
@@ -433,7 +500,6 @@ def tratarSpedEcf(pastaDestinoEcf, nomeEmpresa):
                         shutil.move(os.path.join(pastaDestinoEcf, arquivo), os.path.join(pastaBackup, arquivo))
                 else:
                     arquivosSeparados[periodo] = {'data_hora': dataHora, 'caminho': os.path.join(pastaDestinoEcf, arquivo)}
-
 
 def pesquisa(sped, dataInicio, dataFim, alinha, nome_empresa, cnpj):
         
@@ -716,7 +782,6 @@ def verificarSolicitacao(alinha, sped):
 
         time.sleep(1)
 
-
 def coletarPedido(nome_empresa, cnpj):
     x, y, largura, altura = 918, 489, 70, 30  
     time.sleep(2)
@@ -948,9 +1013,11 @@ def abrirBx(tipoSped, linha):
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
     
 
-abrirBx('icms', 150)
+abrirBx('icms', 170)
 
 #pesquisa('ecd', '01/01/2014', '31/12/2024')
 
 #titulos = gw.getAllTitles()
 #print(titulos)
+
+
