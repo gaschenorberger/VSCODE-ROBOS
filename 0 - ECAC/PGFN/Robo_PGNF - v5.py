@@ -104,9 +104,9 @@ def percorrer_inscricoes():
     verificar_url_PGFN(navegador)
     a, g, i = 1, 1, 1
     dados = []
+    listaExtraidos = [] 
     while True:
         filtro(navegador, a, g)
-    
         try:
             WebDriverWait(navegador, 240).until(lambda navegador: navegador.execute_script('return document.readyState') == 'complete')
 
@@ -174,8 +174,9 @@ def percorrer_inscricoes():
 
             time.sleep(0.4)
             navegador.execute_script("arguments[0].click();", inscricao)
-            extrair_informacao(dados)
-            
+            numInscricaoExtraido = extrair_informacao(dados,listaExtraidos)
+
+
             i += 1
         except TimeoutException:
             traceback.print_exc()
@@ -184,6 +185,7 @@ def percorrer_inscricoes():
             print("erro ao percorrer a lista!")
             traceback.print_exc()
             break
+    print(len(numInscricaoExtraido))
 
 def filtro(navegador, a, g):
     try:
@@ -210,9 +212,11 @@ def filtro(navegador, a, g):
         print("erro no filtro!")
         traceback.print_exc()
 
-def extrair_informacao(dados):
+def extrair_informacao(dados, listaExtraidos):
     WebDriverWait(navegador, 60).until(lambda navegador: navegador.execute_script('return document.readyState') == 'complete')
     
+
+
     xpaths = {
         '/html/body/app-root/div/div[2]/app-inscricao/main/div[1]/h1': 'Padrao',
         '/html/body/app-root/div/div[2]/app-debcad/main/div[1]/h1': 'Debcad',
@@ -476,7 +480,9 @@ def extrair_informacao(dados):
                         break
 
             adicionar_dados(dados)
+            listaExtraidos.append(numInscricao)
             voltarElement.click()
+            return numInscricao
 
         case 'Debcad':
             relatDetalElement = WebDriverWait(navegador, 300).until(
@@ -696,7 +702,10 @@ def extrair_informacao(dados):
                         break
     
             adicionar_dados(dados)
+            listaExtraidos.append(numInscricao)
             voltarElement.click()
+
+            return numInscricao
         
         case 'Fgts':
             
@@ -740,7 +749,10 @@ def extrair_informacao(dados):
             })
             
             adicionar_dados(dados)
+            listaExtraidos.append(numInscricao)
             voltarElement.click()
+
+            return numInscricao
 
         case _:
             print("Nenhum valor correspondente foi encontrado")

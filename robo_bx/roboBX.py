@@ -1013,7 +1013,7 @@ def abrirBx(tipoSped, linha):
             print(f"Tempo estimado para conclusão: {tempo_restante:.2f} segundos")
     
 
-abrirBx('icms', 170)
+abrirBx('icms', 210)
 
 #pesquisa('ecd', '01/01/2014', '31/12/2024')
 
