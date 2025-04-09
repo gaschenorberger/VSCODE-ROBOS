@@ -174,8 +174,7 @@ def percorrer_inscricoes():
 
             time.sleep(0.4)
             navegador.execute_script("arguments[0].click();", inscricao)
-            numInscricaoExtraido = extrair_informacao(dados,listaExtraidos)
-
+            extrair_informacao(dados, listaExtraidos)
 
             i += 1
         except TimeoutException:
@@ -185,7 +184,17 @@ def percorrer_inscricoes():
             print("erro ao percorrer a lista!")
             traceback.print_exc()
             break
-    print(len(numInscricaoExtraido))
+
+    lista_inscricoes = verificarInscricoes() 
+
+    nao_extraidas = [insc for insc in lista_inscricoes if insc not in listaExtraidos]
+
+    if nao_extraidas:
+        print("Inscrições que ainda não foram extraídas:")
+        for i in nao_extraidas:
+            print(i)
+    else:
+        print("Todas as inscrições foram extraídas.")
 
 def filtro(navegador, a, g):
     try:
@@ -794,6 +803,7 @@ def verificarInscricoes():
     inscricoes = soup.find_all('a', attrs={'title': 'Detalhar'})
     
     listaInscricao = []
+    listaInscDuplicadas = []
     totalInscricoes = len(inscricoes)
 
     count = 1
@@ -801,11 +811,10 @@ def verificarInscricoes():
         #print(f'{count}- {inscricao.text}')   
 
         if inscricao in listaInscricao:
-            listaInscDuplicadas = []
             listaInscDuplicadas.append(inscricao.text)
             pass
         else:
-            listaInscricao.append(inscricao)
+            listaInscricao.append(inscricao.text.strip())
 
         if count == totalInscricoes:
             break
@@ -817,8 +826,6 @@ def verificarInscricoes():
     else:
         duplicadas = len(listaInscDuplicadas) 
         print(f"Há {duplicadas} duplicadas em {totalInscricoes} inscrições! \n {listaInscDuplicadas}")
-    
-
 
 
 # ----------------------------------------------------------------------------------------------
