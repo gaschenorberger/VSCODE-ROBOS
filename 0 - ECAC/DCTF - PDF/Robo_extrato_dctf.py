@@ -302,5 +302,5 @@ def calcular_tempo_execucao(func, *args, **kwargs):
     return resultado
 
 print()
-calcular_tempo_execucao(percorrer_dctf, anoInicio="2019", anoFim="2021")
+calcular_tempo_execucao(percorrer_dctf, anoInicio="2014", anoFim="2023")
 

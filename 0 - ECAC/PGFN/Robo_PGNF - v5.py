@@ -106,6 +106,8 @@ def percorrer_inscricoes():
     dados = []
     listaExtraidos = [] 
     while True:
+        if i == 3:
+            break
         filtro(navegador, a, g)
         try:
             WebDriverWait(navegador, 240).until(lambda navegador: navegador.execute_script('return document.readyState') == 'complete')
@@ -175,6 +177,7 @@ def percorrer_inscricoes():
             time.sleep(0.4)
             navegador.execute_script("arguments[0].click();", inscricao)
             extrair_informacao(dados, listaExtraidos)
+            listaExtraidos.append(numInscricao)
 
             i += 1
         except TimeoutException:
@@ -185,7 +188,7 @@ def percorrer_inscricoes():
             traceback.print_exc()
             break
 
-    lista_inscricoes = verificarInscricoes() 
+    lista_inscricoes = verificarInscricoes() or []
 
     nao_extraidas = [insc for insc in lista_inscricoes if insc not in listaExtraidos]
 
@@ -194,7 +197,9 @@ def percorrer_inscricoes():
         for i in nao_extraidas:
             print(i)
     else:
-        print("Todas as inscrições foram extraídas.")
+        print("Todas as inscrições foram extraídas")
+
+        #carai, potente
 
 def filtro(navegador, a, g):
     try:
@@ -827,12 +832,14 @@ def verificarInscricoes():
         duplicadas = len(listaInscDuplicadas) 
         print(f"Há {duplicadas} duplicadas em {totalInscricoes} inscrições! \n {listaInscDuplicadas}")
 
+    return []
+
 
 # ----------------------------------------------------------------------------------------------
-# print("iniciando...")
-# time.sleep(2)
+print("iniciando...")
+time.sleep(2)
 verificar_url_PGFN(navegador)
-# calcular_tempoExecucao(percorrer_inscricoes)
-# renomear_plan()
+percorrer_inscricoes()
+calcular_tempoExecucao(percorrer_inscricoes)
+renomear_plan()
 
-verificarInscricoes()
