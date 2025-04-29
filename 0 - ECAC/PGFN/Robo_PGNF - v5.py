@@ -106,8 +106,6 @@ def percorrer_inscricoes():
     dados = []
     listaExtraidos = [] 
     while True:
-        if i == 3:
-            break
         filtro(navegador, a, g)
         try:
             WebDriverWait(navegador, 240).until(lambda navegador: navegador.execute_script('return document.readyState') == 'complete')

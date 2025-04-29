@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Baixar XML da NFe</title>
+</head>
+<body>
+  <h2>Consulta XML por Chave de Acesso</h2>
+  <input type="text" id="chave" placeholder="Digite a chave da NFe" size="50" />
+  <button onclick="baixarXML()">Baixar XML</button>
+
+  <script>
+    async function baixarXML() {
+      const chave = document.getElementById("chave").value;
+
+      if (!chave) {
+        alert("Digite a chave da NFe.");
+        return;
+      }
+
+      const response = await fetch("/api/download-xml", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chave })
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "nfe.xml";
+        link.click();
+      } else {
+        const erro = await response.json();
+        alert("Erro: " + erro.erro);
+      }
+    }
+  </script>
+</body>
+</html>
