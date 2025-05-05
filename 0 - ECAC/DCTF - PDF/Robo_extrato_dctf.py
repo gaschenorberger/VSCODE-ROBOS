@@ -271,11 +271,11 @@ def robo(ano, nome_arquivo, i):
 
     caminho_completo = f"{novo_caminho}\\{nome_arquivo}.pdf"
     pyperclip.copy(caminho_completo)
-    time.sleep(0.5)
-    pyautogui.hotkey('ctrl', 'v')
     time.sleep(1.5)
+    pyautogui.hotkey('ctrl', 'v')
+    time.sleep(2)
     pyautogui.press('enter')
-    time.sleep(0.5)
+    time.sleep(1.5)
     pyautogui.hotkey('ctrl', 'w')
     navegador.switch_to.window(abas[0])
     navegador.switch_to.default_content()
@@ -302,5 +302,5 @@ def calcular_tempo_execucao(func, *args, **kwargs):
     return resultado
 
 print()
-calcular_tempo_execucao(percorrer_dctf, anoInicio="2014", anoFim="2023")
+calcular_tempo_execucao(percorrer_dctf, anoInicio="2022", anoFim="2024")
 

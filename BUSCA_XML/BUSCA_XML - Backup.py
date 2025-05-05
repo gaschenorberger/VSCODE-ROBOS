@@ -8,6 +8,7 @@ from tqdm import tqdm  # Para barra de progresso
 import pyautogui
 import os
 import shutil
+import subprocess
 
 # Inicia o Chrome
 # "C:\Program Files\Google\Chrome\Application\chrome.exe" --remote-debugging-port=9222 --user-data-dir="C:\ChromeProfile"
@@ -35,6 +36,19 @@ def mover_arquivos_xml():
 
     print("Todos os arquivos movidos")
 
+def abrir_chrome():
+    #CHROME ESPECÍFICO PARA UTILIZAÇÃO DO SELENIUM
+    comando = r'start chrome.exe --remote-debugging-port=9222 --user-data-dir="C:\Selenium\ChromeTestProfile'
+    subprocess.Popen(comando, shell=True)
+
+    time.sleep(2)
+
+    url = 'https://meudanfe.com.br/'
+    pyautogui.write(url)
+    time.sleep(2)
+
+    pyautogui.press('enter')
+
 # Caminho para o arquivo de notas
 caminho_arquivo = r'C:\Users\gabriel.alvise\Desktop\VSCODE-ROBOS\BUSCA_XML\NOTAS.txt'
 arquivo_erros = r'C:\Users\gabriel.alvise\Desktop\VSCODE-ROBOS\BUSCA_XML\erros_download.txt'
@@ -47,12 +61,15 @@ inicio = 0  # A partir de qual chave começar (0 é a primeira)
 fim = None   # Até qual chave processar (None para todas)
 
 # Conectar ao Chrome já aberto (lembre-se de abrir com --remote-debugging-port=9222)
+# abrir_chrome()
+
 chrome_options = webdriver.ChromeOptions()
 
-chrome_options.debugger_address = "localhost:9222"
-
+# chrome_options.debugger_address = "localhost:9222"
+chrome_options.add_argument('--headless')
 # Inicializa o driver conectado ao Chrome aberto
 driver = webdriver.Chrome(options=chrome_options)
+driver.get('https://meudanfe.com.br/')
 
 print("Chrome conectado com sucesso!")
 
