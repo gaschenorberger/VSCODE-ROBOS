@@ -14,7 +14,7 @@ ctk.set_default_color_theme("blue")
 
 root = ctk.CTk()
 root.title("Painel de Download de Notas - Certezza")
-root.geometry("520x600")
+root.geometry("600x600")
 root.resizable(False, False)
 
 # Função para logs
@@ -90,15 +90,15 @@ main_frame.pack(padx=10, pady=(10, 0), fill="x")
 opcoes_frame = ctk.CTkFrame(master=main_frame, fg_color="transparent")
 opcoes_frame.grid(row=0, column=0, columnspan=2, pady=(10, 0), padx=10, sticky="w")
 
-ctk.CTkRadioButton(opcoes_frame, text="PDF", variable=var_opcao, value="PDF", radiobutton_height=15, radiobutton_width=15).pack(side="left", padx=(10, 20))
-ctk.CTkRadioButton(opcoes_frame, text="XML", variable=var_opcao, value="XML", radiobutton_height=15, radiobutton_width=15).pack(side="left")
+ctk.CTkRadioButton(opcoes_frame, text="PDF", variable=var_opcao, value="PDF", radiobutton_height=20, radiobutton_width=20, hover_color="#ffcc00", fg_color="#ffcc00").pack(side="left", padx=(10, 20))
+ctk.CTkRadioButton(opcoes_frame, text="XML", variable=var_opcao, value="XML", radiobutton_height=20, radiobutton_width=20, hover_color="#ffcc00", fg_color="#ffcc00").pack(side="left")
 
 # Logo
 try:
-    logo = Image.open(r"telaRobos\img\logo.png").resize((100, 40))
+    logo = Image.open(r"telaRobos\img\logo.png").resize((250, 50))
     logo_image = ImageTk.PhotoImage(logo)
     logo_label = ctk.CTkLabel(main_frame, image=logo_image, text="")
-    logo_label.place(x=400, y=10)
+    logo_label.place(x=350, y=5)
 except:
     pass
 
@@ -109,17 +109,17 @@ instrucoes = (
     "3- ATIVAR A VPN\n"
     "4- CLICAR NO BOTÃO DE INICIAR"
 )
-ctk.CTkLabel(main_frame, text=instrucoes, justify="left", font=("Arial", 12)).grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+ctk.CTkLabel(main_frame, text=instrucoes, justify="left", font=("Arial", 11)).grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="w")
 
 # Botões
 botao_upload = ctk.CTkButton(main_frame, text="UPLOAD", command=upload_arquivo, fg_color="#FFCC00", hover_color="#E6B800", text_color="black", width=100)
-botao_upload.grid(row=1, column=1, padx=10, pady=5, sticky="e")
+botao_upload.grid(row=1, column=1, padx=350, pady=0, sticky="e")
 
 botao_iniciar = ctk.CTkButton(main_frame, text="INICIAR", command=iniciar_robo, fg_color="#FFCC00", hover_color="#E6B800", text_color="black", width=100)
 botao_iniciar.grid(row=2, column=0, padx=10, pady=(5, 10), sticky="w")
 
 botao_vpn = ctk.CTkButton(main_frame, text="ABRIR VPN", command=abrir_vpn, fg_color="#FFCC00", hover_color="#E6B800", text_color="black", width=100)
-botao_vpn.grid(row=2, column=1, padx=10, pady=(5, 10), sticky="e")
+botao_vpn.grid(row=2, column=1, padx=350, pady=(5, 10), sticky="e")
 
 # Área de Log
 log_frame = ctk.CTkFrame(master=root, fg_color="#EDEDED", border_color="#F5C400", border_width=2)
